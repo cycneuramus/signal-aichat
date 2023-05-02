@@ -65,31 +65,23 @@ async def ai(ctx):
     await msg.mark_read()
     await msg.typing_started()
 
-    triggers = ["!bing", "!gpt", "!llama"]
-    prompt = ""
-    for t in triggers:
-        if t in text:
-            prompt = text[len(t) :].strip()
-            break
+    triggers = {
+        "!bing": bing,
+        "!gpt": gpt,
+        "!llama": llama
+    }
+    default_model = os.getenv("DEFAULT_MODEL").lower()
 
-    response = ""
-    if "!bing" in text:
-        response = await bing(prompt)
-    elif "!gpt" in text:
-        response = await gpt(prompt)
-    elif "!llama" in text:
-        response = await llama(prompt)
+    for trigger, func in triggers.items():
+        if trigger in text:
+            prompt = text[len(trigger):].strip()
+            response = await func(prompt)
+            break
     else:
-        default_model = os.getenv("DEFAULT_MODEL").lower()
-        if default_model == "bing":
-            response = await bing(prompt)
-        if default_model == "gpt":
-            response = await gpt(prompt)
-        if default_model == "llama":
-            response = await llama(prompt)
+        prompt = text
+        response = await triggers[default_model](prompt)
 
     await msg.typing_stopped()
-
     quote = msg.get_group_id() is not None  # quote prompt msg in potentially busy group chats
     await msg.reply(response, quote=quote)
 
