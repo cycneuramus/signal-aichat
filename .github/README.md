@@ -56,24 +56,32 @@ __Once the account is setup, populate the `SIGNAL_PHONE_NUMBER` variable in the 
 See the [EdgeGPT](https://github.com/acheong08/EdgeGPT) repository. TL;DR:
 
 <details>
-	<summary>
+<summary>
+
 Checking access
-	</summary>
+
+</summary>
+
 - Install the latest version of Microsoft Edge
 - Alternatively, you can use any browser and set the user-agent to look like you're using Edge (e.g., `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.51`). You can do this easily with an extension like "User-Agent Switcher and Manager" for [Chrome](https://chrome.google.com/webstore/detail/user-agent-switcher-and-m/bhchdcejhohfmigjafbampogmaanbfkg) and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/user-agent-string-switcher/).
 - Open [bing.com/chat](https://bing.com/chat)
 - If you see a chat feature, you are good to go
+
 </details>
 
 <details>
-	<summary>
+<summary>
+
 Getting authentication
-	</summary>
+
+</summary>
+
 - Install the cookie editor extension for [Chrome](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm) or [Firefox](https://addons.mozilla.org/en-US/firefox/addon/cookie-editor/)
 - Go to `bing.com`
 - Open the extension
 - Click "Export" on the bottom right, then "Export as JSON" (this saves your cookies to the clipboard)
 - Paste your cookies into a file named `cookies.json`
+
 </details>
 
 __Make sure to place the resulting `cookies.json` file in this repo directory.__
@@ -89,7 +97,7 @@ __Make sure to place the resulting `cookies.json` file in this repo directory.__
 ### 4. Llama models
 
 + Place your model weights in the `models` directory
-+ In the `env` file, change the model in the `MODEL` path variable to match your model file
++ In the `.env` file, change the model in the `MODEL` path variable to match your model file
 
 ---
 
