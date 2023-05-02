@@ -101,8 +101,12 @@ __Make sure to place the resulting `cookies.json` file in this repo directory.__
 
 ---
 
-### 5. Deploy
+### 5. Default model
 
-`docker compose up -d`
++ Optionally, populate the `DEFAULT_MODEL` variable in `.env` to avoid explicitly having to trigger a bot response with `!<model>`
+
+### 6. Deploy
+
++ `docker compose up -d`
 
 And start chatting.
