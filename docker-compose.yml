@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  signald:
+    image: registry.gitlab.com/signald/signald
+    container_name: signal-aichat-signald
+    restart: unless-stopped
+    user: 1000:1000
+    volumes:
+      - ./signald:/signald
+
+  bot:
+    image: ghcr.io/cycneuramus/signal-aichat
+    container_name: signal-aichat-bot
+    restart: unless-stopped
+    command: "bot"
+    env_file:
+      - .env
+    volumes:
+      - ./cookies.json:/home/signal-aichat/cookies.json
+      - ./signald:/signald
+
+  llama:
+    image: ghcr.io/cycneuramus/llama-cpp-python
+    container_name: signal-aichat-llama
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./models:/llama.cpp/models
