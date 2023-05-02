@@ -101,7 +101,7 @@ async def main():
         logging_level=logging.INFO,
     ) as bot:
 
-        bot.register_handler(re.compile("!(bing|gpt|llama)"), ai)
+        bot.register_handler("", ai)
         await bot.start()
 
 
