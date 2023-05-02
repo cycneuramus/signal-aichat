@@ -79,6 +79,14 @@ async def ai(ctx):
         response = await gpt(prompt)
     elif "!llama" in text:
         response = await llama(prompt)
+    else:
+        default_model = os.getenv("DEFAULT_MODEL").lower()
+        if default_model == "bing":
+            response = await bing(prompt)
+        if default_model == "gpt":
+            response = await gpt(prompt)
+        if default_model == "llama":
+            response = await llama(prompt)
 
     await msg.typing_stopped()
 
