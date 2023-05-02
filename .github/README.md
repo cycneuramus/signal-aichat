@@ -1,5 +1,7 @@
 __signal-aichat__ is an AI-powered chatbot for the Signal messenger app. It currently supports [Bing Chat](https://bing.com/chat), [ChatGPT](https://chat.openai.com/), and any local [LLM](https://en.wikipedia.org/wiki/Large_language_model) that works with [llama.cpp](https://github.com/ggerganov/llama.cpp)(Vicuna, Alpaca, Koala, et al.). 
 
+---
+
 <p>
 	<img src="../screenshot.png" width=500 />
 </p>
@@ -47,11 +49,11 @@ __Once the account is setup, populate the `SIGNAL_PHONE_NUMBER` variable in the 
 
 ### 2. Bing Chat:
 
-See the [EdgeGPT](https://github.com/acheong08/EdgeGPT] repository. TL;DR:
+See the [EdgeGPT](https://github.com/acheong08/EdgeGPT) repository. TL;DR:
 
 <details>
 	<summary>
-__Checking access__
+Checking access
 	</summary>
 - Install the latest version of Microsoft Edge
 - Alternatively, you can use any browser and set the user-agent to look like you're using Edge (e.g., `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.51`). You can do this easily with an extension like "User-Agent Switcher and Manager" for [Chrome](https://chrome.google.com/webstore/detail/user-agent-switcher-and-m/bhchdcejhohfmigjafbampogmaanbfkg) and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/user-agent-string-switcher/).
@@ -61,7 +63,7 @@ __Checking access__
 
 <details>
 	<summary>
-__Getting authentication__
+Getting authentication
 	</summary>
 - Install the cookie editor extension for [Chrome](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm) or [Firefox](https://addons.mozilla.org/en-US/firefox/addon/cookie-editor/)
 - Go to `bing.com`
