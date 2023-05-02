@@ -75,7 +75,7 @@ async def ai(ctx):
     response = ""
     if "!bing" in text:
         response = await bing(prompt)
-    if "!gpt" in text:
+    elif "!gpt" in text:
         response = await gpt(prompt)
     elif "!llama" in text:
         response = await llama(prompt)
