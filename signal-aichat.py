@@ -17,7 +17,9 @@ def terminate(signal, frame):
 
 async def bing(prompt):
     bing = Chatbot(cookie_path="./cookies.json")
-    data = await bing.ask(prompt=prompt, conversation_style=ConversationStyle.balanced)
+    data = await bing.ask(
+        prompt=prompt, conversation_style=ConversationStyle.balanced
+    )
     await bing.close()
 
     response = data["item"]["messages"][1]["text"]
@@ -39,7 +41,6 @@ async def gpt(prompt):
         ],
     )
     return response.choices[0].message.content
-
 
 
 async def llama(prompt):
@@ -65,16 +66,12 @@ async def ai(ctx):
     await msg.mark_read()
     await msg.typing_started()
 
-    triggers = {
-        "!bing": bing,
-        "!gpt": gpt,
-        "!llama": llama
-    }
+    triggers = {"!bing": bing, "!gpt": gpt, "!llama": llama}
     default_model = os.getenv("DEFAULT_MODEL").lower()
 
     for trigger, func in triggers.items():
         if trigger in text:
-            prompt = text[len(trigger):].strip()
+            prompt = text[len(trigger) :].strip()
             response = await func(prompt)
             break
     else:
@@ -82,7 +79,9 @@ async def ai(ctx):
         response = await triggers[default_model](prompt)
 
     await msg.typing_stopped()
-    quote = msg.get_group_id() is not None  # quote prompt msg in potentially busy group chats
+    quote = (
+        msg.get_group_id() is not None
+    )  # quote prompt msg in potentially busy group chats
     await msg.reply(response, quote=quote)
 
 
@@ -92,7 +91,6 @@ async def main():
         socket_path="/signald/signald.sock",
         logging_level=logging.INFO,
     ) as bot:
-
         bot.register_handler("", ai)
         await bot.start()
 
