@@ -1,4 +1,8 @@
-__signal-aichat__ is an AI-powered chatbot for the Signal messenger app. It currently supports [Bing Chat](https://bing.com/chat), [ChatGPT](https://chat.openai.com/), and any local [LLM](https://en.wikipedia.org/wiki/Large_language_model) that works with [llama.cpp](https://github.com/ggerganov/llama.cpp) (Vicuna, Alpaca, Koala, et al.). 
+__signal-aichat__ is an AI-powered chatbot for the Signal messenger app. It currently supports:
+
++ [Bing Chat](https://bing.com/chat)
++ [ChatGPT](https://chat.openai.com/)
++ Any local [LLM](https://en.wikipedia.org/wiki/Large_language_model) that works with [llama.cpp](https://github.com/ggerganov/llama.cpp) (Vicuna, Alpaca, Koala, et al.). 
 
 ---
 
