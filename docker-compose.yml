@@ -13,7 +13,6 @@ services:
     image: ghcr.io/cycneuramus/signal-aichat
     container_name: signal-aichat-bot
     restart: unless-stopped
-    command: "bot"
     env_file:
       - .env
     volumes:
