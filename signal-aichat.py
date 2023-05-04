@@ -7,6 +7,8 @@ import sys
 import anyio
 import openai
 from EdgeGPT import Chatbot, ConversationStyle
+from langchain import ConversationChain
+from langchain.chat_models import ChatOpenAI
 from semaphore import Bot, ChatContext
 
 
@@ -15,35 +17,23 @@ def terminate(signal, frame):
     sys.exit(0)
 
 
-async def bing(prompt):
-    bing = Chatbot(cookie_path="./cookies.json")
+async def bing(prompt, ctx):
+    bing = ctx.data["bing"]
     data = await bing.ask(
         prompt=prompt, conversation_style=ConversationStyle.balanced
     )
-    await bing.close()
-
     response = data["item"]["messages"][1]["text"]
     return re.sub(
         r"\s?\[\^[0-9]+\^]", "", response
     )  # Strip footnote stubs such as [^1^] # TODO include footnotes instead
 
 
-async def gpt(prompt):
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            },
-        ],
-    )
-    return response.choices[0].message.content
+async def gpt(prompt, ctx):
+    gpt = ctx.data["gpt"]
+    return gpt.predict(input=prompt)
 
 
-async def llama(prompt):
+async def llama(prompt, ctx): # TODO remember chat context
     openai.api_key = "this_can_be_anything"
     openai.api_base = os.getenv("LLAMA_API_BASE")
 
@@ -66,17 +56,30 @@ async def ai(ctx):
     await msg.mark_read()
     await msg.typing_started()
 
+    if not "bing" in ctx.data:
+        ctx.data["bing"] = Chatbot(cookie_path="./cookies.json")
+
+    if not "gpt" in ctx.data:
+        api_key = os.getenv("OPENAI_API_KEY")
+
+        llm = ChatOpenAI(
+            model_name="gpt-3.5-turbo",
+            openai_api_key=api_key,
+            model_kwargs={"max_tokens": 512}
+        )
+        ctx.data["gpt"] = ConversationChain(llm=llm)
+
     triggers = {"!bing": bing, "!gpt": gpt, "!llama": llama}
     default_model = os.getenv("DEFAULT_MODEL").lower()
 
     for trigger, func in triggers.items():
         if trigger in text:
             prompt = text[len(trigger) :].strip()
-            response = await func(prompt)
+            response = await func(prompt, ctx)
             break
     else:
         prompt = text
-        response = await triggers[default_model](prompt)
+        response = await triggers[default_model](prompt, ctx)
 
     await msg.typing_stopped()
     quote = (

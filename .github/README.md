@@ -4,6 +4,8 @@ __signal-aichat__ is an AI-powered chatbot for the Signal messenger app. It curr
 + [ChatGPT](https://chat.openai.com/)
 + Any local [LLM](https://en.wikipedia.org/wiki/Large_language_model) that works with [llama.cpp](https://github.com/ggerganov/llama.cpp) (Vicuna, Alpaca, Koala, et al.)
 
+For Bing and ChatGPT, the chat context will be remembered so you can keep a continuous conversation. Hopefully, this can be added for local models in the future.
+
 ---
 
 <p>
@@ -104,6 +106,8 @@ __Make sure to place the resulting `cookies.json` file in this repo directory.__
 ### 5. Default model
 
 + Optionally, populate the `DEFAULT_MODEL` variable in `.env` to avoid explicitly having to trigger a bot response with `!<model>`
+
+---
 
 ### 6. Deploy
 

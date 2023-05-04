@@ -1,4 +1,4 @@
-FROM python:alpine
+FROM python:3.10
 
 ARG USER=signal-aichat
 ARG HOME_DIR=/home/$USER
@@ -13,6 +13,7 @@ WORKDIR $HOME_DIR
 
 RUN pip install \
 	EdgeGPT \
+	langchain \
 	openai \
 	semaphore-bot
 
