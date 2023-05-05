@@ -54,7 +54,6 @@ async def ai(ctx):
     text = msg.get_body()
 
     await msg.mark_read()
-    await msg.typing_started()
 
     if not "bing" in ctx.data:
         ctx.data["bing"] = Chatbot(cookie_path="./cookies.json")
@@ -78,6 +77,7 @@ async def ai(ctx):
     response = ""
     for t in triggers:
         if t in text:
+            await msg.typing_started()
             func = triggers[t]
             prompt = text[len(t) :].strip()
             response = await func(prompt, ctx)
@@ -86,6 +86,7 @@ async def ai(ctx):
         if default_model is not None and any(
             default_model in t for t in triggers
         ):
+            await msg.typing_started()
             response = await triggers[default_model](text, ctx)
 
     if response:
