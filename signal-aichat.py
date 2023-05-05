@@ -33,7 +33,7 @@ async def gpt(prompt, ctx):
     return gpt.predict(input=prompt)
 
 
-async def llama(prompt, ctx): # TODO remember chat context
+async def llama(prompt, ctx):  # TODO remember chat context
     openai.api_key = "this_can_be_anything"
     openai.api_base = os.getenv("LLAMA_API_BASE")
 
@@ -65,27 +65,35 @@ async def ai(ctx):
         llm = ChatOpenAI(
             model_name="gpt-3.5-turbo",
             openai_api_key=api_key,
-            model_kwargs={"max_tokens": 512}
+            model_kwargs={"max_tokens": 512},
         )
         ctx.data["gpt"] = ConversationChain(llm=llm)
 
     triggers = {"!bing": bing, "!gpt": gpt, "!llama": llama}
-    default_model = os.getenv("DEFAULT_MODEL").lower()
+    default_model = os.getenv("DEFAULT_MODEL")
 
-    for trigger, func in triggers.items():
-        if trigger in text:
-            prompt = text[len(trigger) :].strip()
+    if default_model is not None:
+        default_model = default_model.lower()
+
+    response = ""
+    for t in triggers:
+        if t in text:
+            func = triggers[t]
+            prompt = text[len(t) :].strip()
             response = await func(prompt, ctx)
             break
     else:
-        prompt = text
-        response = await triggers[default_model](prompt, ctx)
+        if default_model is not None and any(
+            default_model in t for t in triggers
+        ):
+            response = await triggers[default_model](text, ctx)
 
-    await msg.typing_stopped()
-    quote = (
-        msg.get_group_id() is not None
-    )  # quote prompt msg in potentially busy group chats
-    await msg.reply(response, quote=quote)
+    if response:
+        await msg.typing_stopped()
+        quote = (
+            msg.get_group_id() is not None
+        )  # quote prompt msg in potentially busy group chats
+        await msg.reply(response, quote=quote)
 
 
 async def main():
