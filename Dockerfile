@@ -11,12 +11,8 @@ RUN adduser \
 USER $USER
 WORKDIR $HOME_DIR
 
-RUN pip install \
-	EdgeGPT \
-	langchain \
-	openai \
-	semaphore-bot
+COPY requirements.txt signal-aichat.py ./
 
-COPY signal-aichat.py .
+RUN pip install --no-cache-dir -r requirements.txt
 
 ENTRYPOINT ["python3", "signal-aichat.py"]
