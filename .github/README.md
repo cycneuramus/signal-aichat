@@ -9,7 +9,7 @@ For Bing and ChatGPT, the chat context will be remembered so you can keep a cont
 ---
 
 <p>
-	<img src="../screenshot.png" width=500 />
+	<img src="https://github.com/cycneuramus/signal-aichat/blob/master/.github/screenshot.png" width=500 />
 </p>
 
 ## Setup instructions
@@ -86,7 +86,7 @@ Getting authentication
 
 </details>
 
-__Make sure to place the resulting `cookies.json` file in this repo directory.__
+__Make sure to add the exported JSON to the `cookies.json` file in this repo directory.__
 
 ---
 
@@ -106,6 +106,12 @@ __Make sure to place the resulting `cookies.json` file in this repo directory.__
 ### 5. Default model
 
 + Optionally, populate the `DEFAULT_MODEL` variable in `.env` to avoid explicitly having to trigger a bot response with `!<model>`
+
+Assuming `DEFAULT_MODEL=gpt`, for example, you'd be able to chat like this:
+
+<p>
+	<img src="https://github.com/cycneuramus/signal-aichat/blob/master/.github/default_model.png" width=500 />
+</p>
 
 ---
 
