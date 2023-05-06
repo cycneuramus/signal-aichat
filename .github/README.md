@@ -30,7 +30,7 @@ docker compose up -d signald
 Drop into the container's shell:
 
 ```
-docker exec -it signald /bin/bash
+docker exec -it signal-aichat-signald /bin/bash
 ```
 
 Once inside the container, either:
