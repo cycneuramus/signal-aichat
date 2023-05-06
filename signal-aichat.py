@@ -12,16 +12,9 @@ from langchain.chat_models import ChatOpenAI
 from semaphore import Bot, ChatContext
 
 
-def terminate(signal, frame):
-    print("Exiting...")
-    sys.exit(0)
-
-
 async def bing(prompt, ctx):
     bing = ctx.data["bing"]
-    data = await bing.ask(
-        prompt=prompt, conversation_style=ConversationStyle.balanced
-    )
+    data = await bing.ask(prompt=prompt, conversation_style=ConversationStyle.balanced)
     response = data["item"]["messages"][1]["text"]
     return re.sub(
         r"\s?\[\^[0-9]+\^]", "", response
@@ -83,9 +76,7 @@ async def ai(ctx):
             response = await func(prompt, ctx)
             break
     else:
-        if default_model is not None and any(
-            default_model in t for t in triggers
-        ):
+        if default_model is not None and any(default_model in t for t in triggers):
             await msg.typing_started()
             response = await triggers[default_model](text, ctx)
 
@@ -108,5 +99,5 @@ async def main():
 
 
 if __name__ == "__main__":
-    signal.signal(signal.SIGTERM, terminate)
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
     anyio.run(main)
