@@ -111,7 +111,7 @@ async def ai(ctx):
     if "default_model" not in ctx.data:
         default_model = os.getenv("DEFAULT_MODEL")
         if default_model is not None:
-            default_model = default_model.lower()
+            default_model = f"!{default_model.lower()}"
         ctx.data["default_model"] = default_model
 
     bing = ctx.data["bing"]
