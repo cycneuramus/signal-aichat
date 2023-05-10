@@ -1,20 +1,18 @@
 __signal-aichat__ is an AI-powered chatbot for the Signal messenger app. It currently supports:
 
-+ [Bing Chat](https://bing.com/chat)
-+ [ChatGPT](https://chat.openai.com/)
-+ Any local [LLM](https://en.wikipedia.org/wiki/Large_language_model) that works with [llama.cpp](https://github.com/ggerganov/llama.cpp) (Vicuna, Alpaca, Koala, et al.)
-
-For Bing and ChatGPT, the chat context will be remembered so you can keep a continuous conversation. Hopefully, this can be added for local models in the future.
+- [Bing Chat](https://bing.com/chat)
+- [ChatGPT](https://chat.openai.com/)
+- Any local [LLM](https://en.wikipedia.org/wiki/Large_language_model) that works with [llama.cpp](https://github.com/ggerganov/llama.cpp) (Vicuna, Alpaca, Koala, et al.)
 
 ---
 
 <p>
-	<img src="https://github.com/cycneuramus/signal-aichat/blob/master/.github/screenshot.png" width=500 />
+ <img src="https://github.com/cycneuramus/signal-aichat/blob/master/.github/screenshot.png" width=500 />
 </p>
 
 ## Setup instructions
 
-### 0. Clone this repo:
+### 0. Clone this repo
 
 `git clone https://github.com/cycneuramus/signal-aichat`
 
@@ -23,6 +21,7 @@ For Bing and ChatGPT, the chat context will be remembered so you can keep a cont
 ### 1. `signald`
 
 Start the `signald` container:
+
 ```
 docker compose up -d signald
 ```
@@ -53,7 +52,7 @@ __Once the account is setup, populate the `SIGNAL_PHONE_NUMBER` variable in the 
 
 ---
 
-### 2. Bing Chat:
+### 2. Bing Chat
 
 See the [EdgeGPT](https://github.com/acheong08/EdgeGPT) repository. TL;DR:
 
@@ -92,31 +91,32 @@ __Make sure to add the exported JSON to the `cookies.json` file in this repo dir
 
 ### 3. ChatGPT
 
-+ In the `.env` file, populate the `OPENAI_API_KEY` variable with your API key
+- In the `.env` file, populate the `OPENAI_API_KEY` variable with your API key
+- Optionally, populate the `OPENAI_API_BASE` variable to use a different endpoint (defaults to <https://api.openai.com/v1>)
 
 ---
 
 ### 4. Llama models
 
-+ Place your model weights in the `models` directory
-+ In the `.env` file, change the model in the `MODEL` path variable to match your model file
+- Place your model weights in the `models` directory
+- In the `.env` file, change the model in the `MODEL` path variable to match your model file
 
 ---
 
 ### 5. Default model
 
-+ Optionally, populate the `DEFAULT_MODEL` variable in `.env` to avoid explicitly having to trigger a bot response with `!<model>`
+- Optionally, populate the `DEFAULT_MODEL` variable in `.env` to avoid explicitly having to trigger a bot response with `!<model>`
 
-Assuming `DEFAULT_MODEL=gpt`, for example, you'd be able to chat like this:
+Assuming `DEFAULT_MODEL=gpt`, for example, you'd be able to chat normally:
 
 <p>
-	<img src="https://github.com/cycneuramus/signal-aichat/blob/master/.github/default_model.png" width=500 />
+ <img src="https://github.com/cycneuramus/signal-aichat/blob/master/.github/default_model.png" width=500 />
 </p>
 
 ---
 
 ### 6. Deploy
 
-+ `docker compose up -d`
+- `docker compose up -d`
 
 And start chatting.

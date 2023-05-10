@@ -3,43 +3,85 @@ import os
 import re
 import signal
 import sys
+from collections import deque
 
 import anyio
-import openai
 from EdgeGPT import Chatbot, ConversationStyle
-from langchain import ConversationChain
-from langchain.chat_models import ChatOpenAI
-from semaphore import Bot, ChatContext
+from semaphore import Bot
+
+import openai
 
 
-async def bing(prompt, ctx):
-    bing = ctx.data["bing"]
-    data = await bing.ask(prompt=prompt, conversation_style=ConversationStyle.balanced)
-    response = data["item"]["messages"][1]["text"]
-    return re.sub(
-        r"\s?\[\^[0-9]+\^]", "", response
-    )  # Strip footnote stubs such as [^1^] # TODO include footnotes instead
+class ChatHistory:
+    def __init__(self, msg_limit):
+        self.stack = deque(maxlen=msg_limit)
+
+    def append(self, msg):
+        return self.stack.append(msg)
+
+    def get_as_list(self):
+        return list(self.stack)
 
 
-async def gpt(prompt, ctx):
-    gpt = ctx.data["gpt"]
-    return gpt.predict(input=prompt)
+class BingAPI:
+    def __init__(self, cookie_path, conversation_style):
+        self.conversation_style = conversation_style
+        self.chat = Chatbot(cookie_path=cookie_path)
+
+    @staticmethod
+    def _cleanup_footnote_marks(response):
+        response_clean = re.sub(r"\[\^(\d+)\^\]", r"[\1]", response)
+        return response_clean
+
+    @staticmethod
+    def _parse_footnotes(response):
+        sources_raw = response["item"]["messages"][1]["sourceAttributions"]
+        name = "providerDisplayName"
+        url = "seeMoreUrl"
+
+        sources = ""
+        for i, source in enumerate(sources_raw, start=1):
+            if name in source.keys() and url in source.keys():
+                sources += f"[{i}]: {source[name]}: {source[url]}\n"
+            else:
+                continue
+
+        return sources
+
+    async def send(self, text):
+        data = await self.chat.ask(prompt=text)
+        sources = self._parse_footnotes(data)
+        response_raw = data["item"]["messages"][1]["text"]
+        response_clean = self._cleanup_footnote_marks(response_raw)
+
+        if sources:
+            return f"{response_clean}\n\n{sources}"
+        else:
+            return response_clean
 
 
-async def llama(prompt, ctx):  # TODO remember chat context
-    openai.api_key = "this_can_be_anything"
-    openai.api_base = os.getenv("LLAMA_API_BASE")
+class OpenAIAPI:
+    def __init__(
+        self, api_key, api_base, model="gpt-3.5-turbo", max_history=5, max_tokens=1024
+    ):
+        self.model = model
+        self.history = ChatHistory(max_history)
+        self.max_tokens = max_tokens
+        openai.api_key = api_key
+        openai.api_base = api_base
 
-    response = openai.ChatCompletion.create(
-        model="this_can_be_anything",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            },
-        ],
-    )
-    return response.choices[0].message.content
+    async def send(self, text):
+        new_message = {"role": "user", "content": text}
+        self.history.append(new_message)
+        messages = self.history.get_as_list()
+
+        response = openai.ChatCompletion.create(
+            model=self.model, messages=messages, max_tokens=self.max_tokens
+        )
+
+        self.history.append(response.choices[0].message)
+        response = response.choices[0].message.content
+        return response
 
 
 async def ai(ctx):
@@ -48,37 +90,48 @@ async def ai(ctx):
 
     await msg.mark_read()
 
-    if not "bing" in ctx.data:
-        ctx.data["bing"] = Chatbot(cookie_path="./cookies.json")
-
-    if not "gpt" in ctx.data:
-        api_key = os.getenv("OPENAI_API_KEY")
-
-        llm = ChatOpenAI(
-            model_name="gpt-3.5-turbo",
-            openai_api_key=api_key,
-            model_kwargs={"max_tokens": 512},
+    if "bing" not in ctx.data:
+        ctx.data["bing"] = BingAPI(
+            cookie_path="./cookies.json",
+            conversation_style=ConversationStyle.balanced,
         )
-        ctx.data["gpt"] = ConversationChain(llm=llm)
 
-    triggers = {"!bing": bing, "!gpt": gpt, "!llama": llama}
-    default_model = os.getenv("DEFAULT_MODEL")
+    if "gpt" not in ctx.data:
+        api_key = os.getenv("OPENAI_API_KEY")
+        api_base = (
+            os.getenv("OPENAI_API_BASE") or "https://api.openai.com/v1"
+        )  # TODO document env var
+        ctx.data["gpt"] = OpenAIAPI(api_key=api_key, api_base=api_base)
 
-    if default_model is not None:
-        default_model = default_model.lower()
+    if "llama" not in ctx.data:
+        api_key = "this_can_be_anything"
+        api_base = os.getenv("LLAMA_API_BASE")
+        ctx.data["llama"] = OpenAIAPI(api_key=api_key, api_base=api_base)
+
+    if "default_model" not in ctx.data:
+        default_model = os.getenv("DEFAULT_MODEL")
+        if default_model is not None:
+            default_model = default_model.lower()
+        ctx.data["default_model"] = default_model
+
+    bing = ctx.data["bing"]
+    gpt = ctx.data["gpt"]
+    llama = ctx.data["llama"]
+    default_model = ctx.data["default_model"]
+
+    triggers = {"!bing": bing.send, "!gpt": gpt.send, "!llama": llama.send}
 
     response = ""
     for t in triggers:
         if t in text:
             await msg.typing_started()
-            func = triggers[t]
             prompt = text[len(t) :].strip()
-            response = await func(prompt, ctx)
+            response = await triggers[t](prompt)
             break
     else:
         if default_model is not None and any(default_model in t for t in triggers):
             await msg.typing_started()
-            response = await triggers[default_model](text, ctx)
+            response = await triggers[default_model](text)
 
     if response:
         await msg.typing_stopped()
