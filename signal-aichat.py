@@ -120,12 +120,16 @@ async def ai(ctx):
     disabled_models = os.getenv("DISABLED_MODELS", "").lower()
     default_model = os.getenv("DEFAULT_MODEL", "").lower()
 
-    triggers = {}
-    for model in MODELS:
-        if model not in ctx.data and model not in disabled_models:
-            ctx.data[model] = AI(model)
-        if model not in disabled_models:
-            triggers[ctx.data[model].trigger] = ctx.data[model].api
+    if "triggers" not in ctx.data:
+        triggers = {}
+        for model in MODELS:
+            if model not in ctx.data and model not in disabled_models:
+                ctx.data[model] = AI(model)
+            if model not in disabled_models:
+                triggers[ctx.data[model].trigger] = ctx.data[model].api
+        ctx.data["triggers"] = triggers
+    else:
+        triggers = ctx.data["triggers"]
 
     response = ""
     for trigger, api in triggers.items():
