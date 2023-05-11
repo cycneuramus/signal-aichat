@@ -6,10 +6,11 @@ import sys
 from collections import deque
 
 import anyio
+import openai
 from EdgeGPT import Chatbot, ConversationStyle
 from semaphore import Bot
 
-import openai
+MODELS = ["bing", "gpt", "llama"]
 
 
 class ChatHistory:
@@ -23,19 +24,42 @@ class ChatHistory:
         return list(self.stack)
 
 
+class AI:
+    def __init__(self, model) -> None:
+        assert (
+            model in MODELS
+        ), f"value attribute to {__class__.__name__} must be one of {MODELS}"
+        self.model = model
+        self.trigger = f"!{model}"
+        self.api = self.get_api()
+
+    def get_api(self):
+        if self.model == "bing":
+            return BingAPI(
+                cookie_path="./cookies.json",
+                conversation_style=ConversationStyle.balanced,
+            )
+
+        if self.model == "gpt":
+            api_key = os.getenv("OPENAI_API_KEY")
+            api_base = os.getenv("OPENAI_API_BASE") or "https://api.openai.com/v1"
+            return OpenAIAPI(api_key=api_key, api_base=api_base)
+
+        if self.model == "llama":
+            api_key = "this_can_be_anything"
+            api_base = os.getenv("LLAMA_API_BASE")
+            return OpenAIAPI(api_key=api_key, api_base=api_base)
+
+
 class BingAPI:
     def __init__(self, cookie_path, conversation_style):
         self.conversation_style = conversation_style
         self.chat = Chatbot(cookie_path=cookie_path)
 
-    @staticmethod
-    def _cleanup_footnote_marks(response):
-        response_clean = re.sub(r"\[\^(\d+)\^\]", r"[\1]", response)
-        return response_clean
+    def _cleanup_footnote_marks(self, response):
+        return re.sub(r"\[\^(\d+)\^\]", r"[\1]", response)
 
-    @staticmethod
-    def _parse_footnotes(response):
-        sources_raw = response["item"]["messages"][1]["sourceAttributions"]
+    def _parse_sources(self, sources_raw):
         name = "providerDisplayName"
         url = "seeMoreUrl"
 
@@ -50,14 +74,19 @@ class BingAPI:
 
     async def send(self, text):
         data = await self.chat.ask(prompt=text)
-        sources = self._parse_footnotes(data)
+        sources_raw = data["item"]["messages"][1]["sourceAttributions"]
+        if sources_raw:
+            sources = self._parse_sources(sources_raw)
+        else:
+            sources = ""
+
         response_raw = data["item"]["messages"][1]["text"]
-        response_clean = self._cleanup_footnote_marks(response_raw)
+        response = self._cleanup_footnote_marks(response_raw)
 
         if sources:
-            return f"{response_clean}\n\n{sources}"
+            return f"{response}\n\n{sources}"
         else:
-            return response_clean
+            return response
 
 
 class OpenAIAPI:
@@ -88,48 +117,38 @@ async def ai(ctx):
     msg = ctx.message
     text = msg.get_body()
 
-    await msg.mark_read()
+    disabled_models = os.getenv("DISABLED_MODELS", "")
+    default_model = os.getenv("DEFAULT_MODEL", "")
+    if default_model is not None:
+        default_model = default_model.lower()
 
-    if "bing" not in ctx.data:
-        ctx.data["bing"] = BingAPI(
-            cookie_path="./cookies.json",
-            conversation_style=ConversationStyle.balanced,
-        )
-
-    if "gpt" not in ctx.data:
-        api_key = os.getenv("OPENAI_API_KEY")
-        api_base = os.getenv("OPENAI_API_BASE") or "https://api.openai.com/v1"
-        ctx.data["gpt"] = OpenAIAPI(api_key=api_key, api_base=api_base)
-
-    if "llama" not in ctx.data:
-        api_key = "this_can_be_anything"
-        api_base = os.getenv("LLAMA_API_BASE")
-        ctx.data["llama"] = OpenAIAPI(api_key=api_key, api_base=api_base)
-
-    if "default_model" not in ctx.data:
-        default_model = os.getenv("DEFAULT_MODEL")
-        if default_model is not None:
-            default_model = f"!{default_model.lower()}"
-        ctx.data["default_model"] = default_model
-
-    bing = ctx.data["bing"]
-    gpt = ctx.data["gpt"]
-    llama = ctx.data["llama"]
-    default_model = ctx.data["default_model"]
-
-    triggers = {"!bing": bing.send, "!gpt": gpt.send, "!llama": llama.send}
+    triggers = {}
+    for model in MODELS:
+        if model not in ctx.data and model not in disabled_models:
+            ctx.data[model] = AI(model)
+        if model not in disabled_models:
+            triggers[ctx.data[model].trigger] = ctx.data[model].api
 
     response = ""
-    for t in triggers:
-        if t in text:
-            await msg.typing_started()
-            prompt = text[len(t) :].strip()
-            response = await triggers[t](prompt)
+    for trigger, api in triggers.items():
+        if trigger in text and trigger.replace("!", "") not in disabled_models:
+            try:
+                await msg.mark_read()
+                await msg.typing_started()
+                prompt = text[len(trigger) :].strip()
+                response = await api.send(prompt)
+            except Exception as e:
+                response = f"I encountered an error: {str(e)}"
             break
     else:
-        if default_model is not None and any(default_model in t for t in triggers):
-            await msg.typing_started()
-            response = await triggers[default_model](text)
+        if default_model and f"!{default_model}" in triggers.keys():
+            try:
+                await msg.mark_read()
+                await msg.typing_started()
+                api = ctx.data[default_model].api
+                response = await api.send(text)
+            except Exception as e:
+                response = f"I encountered an error: {str(e)}"
 
     if response:
         await msg.typing_stopped()

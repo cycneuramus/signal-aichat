@@ -103,9 +103,12 @@ __Make sure to add the exported JSON to the `cookies.json` file in this repo dir
 
 ---
 
-### 5. Default model
+### 5. Additional configuration
 
-- Optionally, populate the `DEFAULT_MODEL` variable in `.env` to avoid explicitly having to trigger a bot response with `!<model>`
+In `.env`:
+
+- Models can be disabled by populating the `DISABLED_MODELS` variable
+- To chat with a default model without explicitly having to trigger a bot response with `!<model>`, populate the `DEFAULT_MODEL` variable
 
 Assuming `DEFAULT_MODEL=gpt`, for example, you'd be able to chat normally:
 
