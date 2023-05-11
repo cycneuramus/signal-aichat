@@ -98,9 +98,7 @@ async def ai(ctx):
 
     if "gpt" not in ctx.data:
         api_key = os.getenv("OPENAI_API_KEY")
-        api_base = (
-            os.getenv("OPENAI_API_BASE") or "https://api.openai.com/v1"
-        )  # TODO document env var
+        api_base = os.getenv("OPENAI_API_BASE") or "https://api.openai.com/v1"
         ctx.data["gpt"] = OpenAIAPI(api_key=api_key, api_base=api_base)
 
     if "llama" not in ctx.data:
