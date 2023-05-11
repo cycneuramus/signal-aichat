@@ -42,7 +42,7 @@ class AI:
 
         if self.model == "gpt":
             api_key = os.getenv("OPENAI_API_KEY")
-            api_base = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
+            api_base = os.getenv("OPENAI_API_BASE") or "https://api.openai.com/v1"
             return OpenAIAPI(api_key=api_key, api_base=api_base)
 
         if self.model == "llama":
