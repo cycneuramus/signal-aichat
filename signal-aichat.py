@@ -36,7 +36,7 @@ class AI:
     def get_api(self):
         if self.model == "bing":
             return BingAPI(
-                cookie_path="./cookies.json",
+                cookie_path="./config/cookies.json",
                 conversation_style=ConversationStyle.balanced,
             )
 
