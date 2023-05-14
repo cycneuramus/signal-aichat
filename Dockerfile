@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/python:3.10
+FROM public.ecr.aws/docker/library/python:3.10-slim-bullseye
 
 ARG USER=signal-aichat
 ARG HOME_DIR=/home/$USER
