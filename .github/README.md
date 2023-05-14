@@ -85,7 +85,7 @@ Getting authentication
 
 </details>
 
-__Make sure to add the exported JSON to the `cookies.json` file in this repo directory.__
+__Make sure to add the exported JSON to the `config/cookies.json` file in this repo directory.__
 
 ---
 

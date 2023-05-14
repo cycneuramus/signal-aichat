@@ -16,7 +16,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./cookies.json:/home/signal-aichat/cookies.json
+      - ./config:/home/signal-aichat/config
       - ./signald:/signald
 
   llama:
