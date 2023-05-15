@@ -65,7 +65,7 @@ class BardAPI:
     def __init__(self, token):
         self.chat = Bard(token)
 
-    def send(self, text):
+    async def send(self, text):
         return self.chat.ask(text)
 
 
@@ -109,9 +109,9 @@ class BingAPI:
 
 class HugchatAPI:
     def __init__(self):
-        self.chat = hugchat.Chatbot()
+        self.chat = hugchat.ChatBot()
 
-    def send(self, text):
+    async def send(self, text):
         return self.chat.chat(text)
 
 
