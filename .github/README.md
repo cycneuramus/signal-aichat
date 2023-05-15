@@ -2,7 +2,8 @@ __signal-aichat__ is an AI-powered chatbot for the Signal messenger app. It curr
 
 - [Bing Chat](https://bing.com/chat)
 - [ChatGPT](https://chat.openai.com/)
-- [HuggingChat](https://huggingface.co/chat/)
+- [Google Bard](https://bard.google.com) (*untested*)
+- [HuggingChat](https://huggingface.co/chat/) (*does not support continuous conversations*)
 - Any local [LLM](https://en.wikipedia.org/wiki/Large_language_model) that works with [llama.cpp](https://github.com/ggerganov/llama.cpp) (Vicuna, Alpaca, Koala, et al.)
 
 ---
@@ -53,7 +54,19 @@ __Once the account is setup, populate the `SIGNAL_PHONE_NUMBER` variable in the 
 
 ---
 
-### 2. Bing Chat
+### 2. Google Bard
+
+See the [Bard](https://github.com/acheong08/Bard) repository. TL;DR:
+
+Go to https://bard.google.com/
+
+- F12 for console
+- Session: Go to Application -> Cookies -> `__Secure-1PSID`. Copy the value of that cookie.
+- In `.env`, populate the `BARD_TOKEN` variable with the cookie value
+
+---
+
+### 3. Bing Chat
 
 See the [EdgeGPT](https://github.com/acheong08/EdgeGPT) repository. TL;DR:
 
@@ -90,21 +103,21 @@ __Make sure to add the exported JSON to the `config/cookies.json` file in this r
 
 ---
 
-### 3. ChatGPT
+### 4. ChatGPT
 
 - In the `.env` file, populate the `OPENAI_API_KEY` variable with your API key
 - Optionally, populate the `OPENAI_API_BASE` variable to use a different endpoint (defaults to <https://api.openai.com/v1>)
 
 ---
 
-### 4. Llama models
+### 5. Llama models
 
 - Place your model weights in the `models` directory
 - In the `.env` file, change the model in the `MODEL` path variable to match your model file
 
 ---
 
-### 5. Additional configuration
+### 6. Additional configuration
 
 In `.env`:
 
@@ -119,7 +132,7 @@ Assuming `DEFAULT_MODEL=gpt`, for example, you'd be able to chat normally:
 
 ---
 
-### 6. Deploy
+### 7. Deploy
 
 - `docker compose up -d`
 

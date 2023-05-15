@@ -1,4 +1,5 @@
 EdgeGPT
+GoogleBard
 hugchat
 openai
 semaphore-bot

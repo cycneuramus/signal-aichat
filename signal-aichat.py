@@ -7,11 +7,13 @@ from collections import deque
 
 import anyio
 import openai
-from EdgeGPT import Chatbot, ConversationStyle
+from Bard import Chatbot as Bard
+from EdgeGPT import Chatbot as Bing
+from EdgeGPT import ConversationStyle
 from hugchat import hugchat
 from semaphore import Bot
 
-MODELS = ["bing", "gpt", "hugchat", "llama"]
+MODELS = ["bard", "bing", "gpt", "hugchat", "llama"]
 
 
 class ChatHistory:
@@ -41,6 +43,10 @@ class AI:
                 conversation_style=ConversationStyle.balanced,
             )
 
+        if self.model == "bard":
+            token = os.getenv("BARD_TOKEN")
+            return BardAPI(token)
+
         if self.model == "gpt":
             api_key = os.getenv("OPENAI_API_KEY")
             api_base = os.getenv("OPENAI_API_BASE") or "https://api.openai.com/v1"
@@ -55,18 +61,18 @@ class AI:
             return OpenAIAPI(api_key=api_key, api_base=api_base)
 
 
-class HugchatAPI:
-    def __init__(self):
-        self.chat = hugchat.Chatbot()
+class BardAPI:
+    def __init__(self, token):
+        self.chat = Bard(token)
 
     def send(self, text):
-        return self.chat.chat(text)
+        return self.chat.ask(text)
 
 
 class BingAPI:
     def __init__(self, cookie_path, conversation_style):
         self.conversation_style = conversation_style
-        self.chat = Chatbot(cookie_path=cookie_path)
+        self.chat = Bing(cookie_path=cookie_path)
 
     def _cleanup_footnote_marks(self, response):
         return re.sub(r"\[\^(\d+)\^\]", r"[\1]", response)
@@ -99,6 +105,14 @@ class BingAPI:
             return f"{response}\n\n{sources}"
         else:
             return response
+
+
+class HugchatAPI:
+    def __init__(self):
+        self.chat = hugchat.Chatbot()
+
+    def send(self, text):
+        return self.chat.chat(text)
 
 
 class OpenAIAPI:
