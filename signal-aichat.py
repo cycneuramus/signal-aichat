@@ -8,9 +8,10 @@ from collections import deque
 import anyio
 import openai
 from EdgeGPT import Chatbot, ConversationStyle
+from hugchat import hugchat
 from semaphore import Bot
 
-MODELS = ["bing", "gpt", "llama"]
+MODELS = ["bing", "gpt", "hugchat", "llama"]
 
 
 class ChatHistory:
@@ -45,10 +46,21 @@ class AI:
             api_base = os.getenv("OPENAI_API_BASE") or "https://api.openai.com/v1"
             return OpenAIAPI(api_key=api_key, api_base=api_base)
 
+        if self.model == "hugchat":
+            return HugchatAPI()
+
         if self.model == "llama":
             api_key = "this_can_be_anything"
             api_base = os.getenv("LLAMA_API_BASE")
             return OpenAIAPI(api_key=api_key, api_base=api_base)
+
+
+class HugchatAPI:
+    def __init__(self):
+        self.chat = hugchat.Chatbot()
+
+    def send(self, text):
+        return self.chat.chat(text)
 
 
 class BingAPI:

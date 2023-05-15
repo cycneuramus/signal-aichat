@@ -1,3 +1,4 @@
 EdgeGPT
+hugchat
 openai
 semaphore-bot
