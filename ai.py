@@ -34,7 +34,7 @@ class ChatModel:
     def get_api(self):
         if self.model == "bing":
             return BingAPI(
-                cookie_path="./config/cookies.json",
+                cookie_path="./config/bing.json",
                 conversation_style=ConversationStyle.balanced,
             )
 
@@ -48,7 +48,7 @@ class ChatModel:
             return OpenAIAPI(api_key=api_key, api_base=api_base)
 
         if self.model == "hugchat":
-            return HugchatAPI()
+            return HugchatAPI(cookie_path=".config/hugchat.json")
 
         if self.model == "llama":
             api_key = "this_can_be_anything"
@@ -103,8 +103,8 @@ class BingAPI:
 
 
 class HugchatAPI:
-    def __init__(self):
-        self.chat = hugchat.ChatBot()
+    def __init__(self, cookie_path):
+        self.chat = hugchat.ChatBot(cookie_path=cookie_path)
 
     async def send(self, text):
         return self.chat.chat(text)
