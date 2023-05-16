@@ -95,11 +95,11 @@ Getting authentication
 - Go to `bing.com`
 - Open the extension
 - Click "Export" on the bottom right, then "Export as JSON" (this saves your cookies to the clipboard)
-- Paste your cookies into a file named `cookies.json`
+- Paste your cookies into a file named `bing.json`
 
 </details>
 
-__Make sure to add the exported JSON to the `config/cookies.json` file in this repo directory.__
+__Make sure to add the exported JSON to the `config/bing.json` file in this repo directory.__
 
 ---
 
@@ -110,14 +110,26 @@ __Make sure to add the exported JSON to the `config/cookies.json` file in this r
 
 ---
 
-### 5. Llama models
+### 5. HuggingChat
+
+See the [HuggingChat API](https://github.com/Soulter/hugging-chat-api) repository. TL;DR:
+
+- Install the `Cookie-Editor` extension for [Chrome](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm) or [Firefox](https://addons.mozilla.org/en-US/firefox/addon/cookie-editor/)
+- Go to [HuggingChat](https://huggingface.co/chat) and **login**
+- Open the extension
+- Click `Export` on the bottom right, then `Export as JSON` (this saves your cookies to the clipboard)
+
+__Make sure to add the exported JSON to the `config/hugchat.json` file in this repo directory.__
+
+---
+### 6. Llama models
 
 - Place your model weights in the `models` directory
 - In the `.env` file, change the model in the `MODEL` path variable to match your model file
 
 ---
 
-### 6. Additional configuration
+### 7. Additional configuration
 
 In `.env`:
 
@@ -132,7 +144,7 @@ Assuming `DEFAULT_MODEL=gpt`, for example, you'd be able to chat normally:
 
 ---
 
-### 7. Deploy
+### 8. Deploy
 
 - `docker compose up -d`
 
