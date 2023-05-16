@@ -27,7 +27,7 @@ class ChatHistory:
         return list(self.stack)
 
 
-class AI:
+class ChatModel:
     def __init__(self, model):
         assert (
             model in MODELS
@@ -150,7 +150,7 @@ async def ai(ctx):
         triggers = {}
         for model in MODELS:
             if model not in ctx.data and model not in disabled_models:
-                ctx.data[model] = AI(model)
+                ctx.data[model] = ChatModel(model)
                 triggers[ctx.data[model].trigger] = ctx.data[model].api
         ctx.data["triggers"] = triggers
     else:
