@@ -48,7 +48,7 @@ class ChatModel:
             return OpenAIAPI(api_key=api_key, api_base=api_base)
 
         if self.model == "hugchat":
-            return HugchatAPI(cookie_path=".config/hugchat.json")
+            return HugchatAPI(cookie_path="./config/hugchat.json")
 
         if self.model == "llama":
             api_key = "this_can_be_anything"
