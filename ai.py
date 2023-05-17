@@ -131,4 +131,4 @@ class OpenAIAPI:
 
         self.history.append(response.choices[0].message)
         response = response.choices[0].message.content
-        return response
+        return response.strip()
