@@ -22,6 +22,8 @@ __signal-aichat__ is an AI-powered chatbot for the Signal messenger app. It curr
 
 ### 1. `signald`
 
+*Chatting with your own number via "Note to Self" does not work. This assumes you will be using a separate Signal account for the bot.*
+
 Start the `signald` container:
 
 ```
