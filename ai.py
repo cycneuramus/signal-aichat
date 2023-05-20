@@ -119,10 +119,13 @@ class OpenAIAPI:
         self.model = model
         self.history = ChatHistory(max_history)
         self.max_tokens = max_tokens
-        openai.api_key = api_key
-        openai.api_base = api_base
+		self.api_key = api_key
+		self.api_base = api_base
 
     async def send(self, text):
+        openai.api_key = self.api_key
+        openai.api_base = self.api_base
+
         new_message = {"role": "user", "content": text}
         self.history.append(new_message)
         messages = self.history.get_as_list()
