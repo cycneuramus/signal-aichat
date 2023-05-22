@@ -34,7 +34,6 @@ class ChatModel:
     def get_api(self):
         if self.model == "bing":
             return BingAPI(
-                cookie_path="./config/bing.json",
                 conversation_style=ConversationStyle.balanced,
             )
 
@@ -67,9 +66,9 @@ class BardAPI:
 
 
 class BingAPI:
-    def __init__(self, cookie_path, conversation_style):
+    def __init__(self, conversation_style):
         self.conversation_style = conversation_style
-        self.chat = Bing(cookie_path=cookie_path)
+        self.chat = Bing()
 
     def _cleanup_footnote_marks(self, response):
         return re.sub(r"\[\^(\d+)\^\]", r"[\1]", response)
@@ -78,17 +77,21 @@ class BingAPI:
         name = "providerDisplayName"
         url = "seeMoreUrl"
 
+        i = 1
         sources = ""
-        for i, source in enumerate(sources_raw, start=1):
+        for source in sources_raw:
             if name in source.keys() and url in source.keys():
                 sources += f"[{i}]: {source[name]}: {source[url]}\n"
+                i += 1
             else:
                 continue
 
         return sources
 
     async def send(self, text):
-        data = await self.chat.ask(prompt=text)
+        data = await self.chat.ask(
+            prompt=text, conversation_style=self.conversation_style
+        )
         sources_raw = data["item"]["messages"][1]["sourceAttributions"]
         if sources_raw:
             sources = self._parse_sources(sources_raw)

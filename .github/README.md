@@ -70,6 +70,8 @@ Go to https://bard.google.com/
 
 ### 3. Bing Chat
 
+__SETUP NO LONGER REQUIRED. THIS STEP CAN BE SKIPPED.__
+
 See the [EdgeGPT](https://github.com/acheong08/EdgeGPT) repository. TL;DR:
 
 <details>
