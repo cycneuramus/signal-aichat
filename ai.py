@@ -94,13 +94,16 @@ class BingAPI:
         for source in sources_raw:
             if name in source.keys() and url in source.keys():
                 sources += f"[{i}]: {source[name]}: {source[url]}\n"
+                i += 1
             else:
                 continue
 
         return sources
 
     async def send(self, text):
-        data = await self.chat.ask(prompt=text)
+        data = await self.chat.ask(
+            prompt=text, conversation_style=self.conversation_style
+        )
         sources_raw = data["item"]["messages"][1]["sourceAttributions"]
         if sources_raw:
             sources = self._parse_sources(sources_raw)
