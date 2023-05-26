@@ -74,14 +74,14 @@ class BingAPI:
     def __init__(self, conversation_style, cookie_path):
         self.conversation_style = conversation_style
         self.cookie_path = cookie_path
-        self.chat = self._create_chat
+        self.cookies = self._parse_cookies()
+        self.chat = Bing(cookies=self.cookies)
 
-    async def _create_chat(self, cookie_path):
-        if cookie_path is None:
-            return await Bing.create()
+    def _parse_cookies(self):
+        if self.cookie_path is None:
+            return None
         else:
-            cookies = json.loads(open(cookie_path, encoding="utf-8").read())
-            return await Bing.create(cookies=cookies)
+            return json.loads(open(self.cookie_path, encoding="utf-8").read())
 
     def _cleanup_footnote_marks(self, response):
         return re.sub(r"\[\^(\d+)\^\]", r"[\1]", response)
