@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from collections import deque
@@ -33,9 +34,11 @@ class ChatModel:
 
     def get_api(self):
         if self.model == "bing":
+            cookie_path = "./config/bing.json"
+            if not os.path.exists(cookie_path):
+                cookie_path = None
             return BingAPI(
-                cookie_path="./config/bing.json",
-                conversation_style=ConversationStyle.balanced,
+                conversation_style=ConversationStyle.creative, cookie_path=cookie_path
             )
 
         if self.model == "bard":
@@ -50,7 +53,8 @@ class ChatModel:
             return OpenAIAPI(api_key=openai_api_key, api_base=openai_api_base)
 
         if self.model == "hugchat":
-            return HugchatAPI(cookie_path="./config/hugchat.json")
+            cookie_path = "./config/hugchat.json"
+            return HugchatAPI(cookie_path=cookie_path)
 
         if self.model == "llama":
             llama_api_key = "this_can_be_anything"
@@ -67,9 +71,17 @@ class BardAPI:
 
 
 class BingAPI:
-    def __init__(self, cookie_path, conversation_style):
+    def __init__(self, conversation_style, cookie_path):
         self.conversation_style = conversation_style
-        self.chat = Bing(cookie_path=cookie_path)
+        self.cookie_path = cookie_path
+        self.chat = self._create_chat
+
+    async def _create_chat(self, cookie_path):
+        if cookie_path is None:
+            return await Bing.create()
+        else:
+            cookies = json.loads(open(cookie_path, encoding="utf-8").read())
+            return await Bing.create(cookies=cookies)
 
     def _cleanup_footnote_marks(self, response):
         return re.sub(r"\[\^(\d+)\^\]", r"[\1]", response)
@@ -78,8 +90,8 @@ class BingAPI:
         name = "providerDisplayName"
         url = "seeMoreUrl"
 
-        sources = ""
-        for i, source in enumerate(sources_raw, start=1):
+        i, sources = 1, ""
+        for source in sources_raw:
             if name in source.keys() and url in source.keys():
                 sources += f"[{i}]: {source[name]}: {source[url]}\n"
             else:
