@@ -50,7 +50,10 @@ class ChatModel:
             openai_api_base = (
                 os.getenv("OPENAI_API_BASE") or "https://api.openai.com/v1"
             )
-            return OpenAIAPI(api_key=openai_api_key, api_base=openai_api_base)
+            openai_model = os.getenv("OPENAI_MODEL") or "gpt-3.5-turbo"
+            return OpenAIAPI(
+                api_key=openai_api_key, api_base=openai_api_base, model=openai_model
+            )
 
         if self.model == "hugchat":
             cookie_path = "./config/hugchat.json"
