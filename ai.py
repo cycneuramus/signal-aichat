@@ -50,7 +50,8 @@ class ChatModel:
             openai_api_base = (
                 os.getenv("OPENAI_API_BASE") or "https://api.openai.com/v1"
             )
-            return OpenAIAPI(api_key=openai_api_key, api_base=openai_api_base)
+            openai_model = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
+            return OpenAIAPI(api_key=openai_api_key, api_base=openai_api_base, model=openai_model)
 
         if self.model == "hugchat":
             cookie_path = "./config/hugchat.json"
@@ -129,7 +130,7 @@ class HugchatAPI:
 
 class OpenAIAPI:
     def __init__(
-        self, api_key, api_base, model="gpt-3.5-turbo", max_history=5, max_tokens=1024
+        self, api_key, api_base, model, max_history=5, max_tokens=1024
     ):
         self.model = model
         self.history = ChatHistory(max_history)
