@@ -3,7 +3,7 @@ name: Python Tests
 on: [ push, pull_request ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,3 +21,12 @@ jobs:
 
       - name: Run Tests
         run: python -m unittest discover -s tests
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: docker build .
