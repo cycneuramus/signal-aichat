@@ -15,4 +15,4 @@ COPY requirements.txt ai.py signal-aichat.py ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["python3", "signal-aichat.py"]
+ENTRYPOINT ["python3", "signal_aichat.py"]
