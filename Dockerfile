@@ -11,8 +11,8 @@ RUN adduser \
 USER $USER
 WORKDIR $HOME_DIR
 
-COPY requirements.txt ai.py signal-aichat.py ./
+COPY requirements.txt ai.py signal_aichat.py ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["python3", "signal-aichat.py"]
+ENTRYPOINT ["python3", "signal_aichat.py"]

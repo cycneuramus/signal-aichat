@@ -5,8 +5,8 @@ from collections import deque
 
 import openai
 from Bard import Chatbot as Bard
-from EdgeGPT import Chatbot as Bing
-from EdgeGPT import ConversationStyle
+from EdgeGPT.EdgeGPT import Chatbot as Bing
+from EdgeGPT.EdgeGPT import ConversationStyle
 from hugchat import hugchat
 
 MODELS = ["bard", "bing", "gpt", "hugchat", "llama"]
