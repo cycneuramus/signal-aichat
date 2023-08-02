@@ -8,6 +8,8 @@ from Bard import Chatbot as Bard
 from EdgeGPT.EdgeGPT import Chatbot as Bing
 from EdgeGPT.EdgeGPT import ConversationStyle
 from hugchat import hugchat
+from claude import claude_client
+from claude import claude_wrapper
 
 MODELS = ["bard", "bing", "gpt", "hugchat", "llama"]
 
