@@ -122,6 +122,18 @@ class BingAPI:
             return response
 
 
+class ClaudeAPI:
+    def __init__(self, session_key):
+        self.client = claude_client.ClaudeClient(session_key)
+        organizations = self.client.get_organizations()
+        self.claude_obj = claude_wrapper.ClaudeWrapper(self.client, organization_uuid=organizations[0]['uuid'])
+        new_conversation_data = self.claude_obj.start_new_conversation("New Conversation", 'Hi how are you?')
+        self.conversation_uuid = new_conversation_data
+
+    async def send(self, text):
+        response = self.claude_obj.send_message(text, conversation_uuid=self.conversation_uuid)
+        return response
+
 class HugchatAPI:
     def __init__(self, cookie_path):
         self.chat = hugchat.ChatBot(cookie_path=cookie_path)
