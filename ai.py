@@ -121,7 +121,7 @@ class BingAPI:
         else:
             return response
 
-
+# to use the claude api library https://github.com/AshwinPathi/claude-api-py
 class ClaudeAPI:
     def __init__(self, session_key):
         self.client = claude_client.ClaudeClient(session_key)
