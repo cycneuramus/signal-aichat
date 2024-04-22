@@ -1,3 +1,9 @@
+# NOTE
+
+*This project is currently archived. The relevant API:s and libraries are constantly shifting, and I don't have time to keep up.*
+
+---
+
 __signal-aichat__ is an AI-powered chatbot for the Signal messenger app. It currently supports:
 
 - [Bing Chat](https://bing.com/chat) – `!bing`
